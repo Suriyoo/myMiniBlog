@@ -2,85 +2,172 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { BLOG_CATEGORIES, CATEGORY_ZH, SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import PostCard from '../../components/PostCard.astro';
 
-const posts = (await getCollection('blog')).sort(
+const posts = (await getCollection('blog', ({ data }) => data.draft !== true)).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+const featuredPosts = posts.filter((post) => post.data.featured === true);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			main {
-				width: 960px;
+				width: var(--listing-width);
 			}
-			ul {
+			.blog-heading {
+				margin-bottom: 1.1rem;
+			}
+			.blog-heading h1 {
+				margin: 0;
+				font-size: var(--font-size-page-title);
+				color: var(--text-primary);
+			}
+			.blog-heading-en {
+				margin: 0.3rem 0 0;
+				font-size: var(--font-size-caption);
+				letter-spacing: 0.16em;
+				text-transform: uppercase;
+				color: var(--text-english);
+			}
+			.blog-intro {
+				max-width: 42rem;
+				margin: var(--space-3) 0 var(--space-1);
+				color: var(--text-secondary);
+			}
+			.blog-intro-en {
+				margin: 0 0 var(--space-6);
+				color: var(--text-english);
+				font-size: var(--font-size-small);
+			}
+			.category-filter {
 				display: flex;
 				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
+				gap: var(--space-2);
+				margin: 0 0 var(--space-6);
+			}
+			.category-filter a {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-width: 4.4rem;
+				padding: 0.4rem var(--space-3);
+				border-radius: var(--radius-pill);
+				background: var(--surface);
+				color: var(--text-primary);
+				text-decoration: none;
+				box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.06);
+				transition: color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+			}
+			.category-filter a:hover,
+			.category-filter a.is-active {
+				background: var(--accent-soft);
+				color: var(--text-primary);
+			}
+			.blog-featured {
+				margin: var(--space-6) 0 var(--space-8);
+			}
+			.blog-featured .section-heading {
+				margin-bottom: var(--space-4);
+			}
+			.blog-featured .section-heading h2 {
+				margin: 0;
+				color: var(--text-primary);
+				font-size: var(--font-size-card-title);
+			}
+			.blog-featured .section-en {
+				margin: var(--space-1) 0 0;
+				color: var(--text-english);
+				font-size: var(--font-size-caption);
+				letter-spacing: 0.12em;
+			}
+			.featured-empty {
+				padding: var(--space-4) 0;
+				border-top: 1px solid var(--divider);
+				border-bottom: 1px solid var(--divider);
+				color: var(--text-secondary);
+			}
+			.featured-empty p {
+				margin: 0;
+			}
+			.featured-empty p + p {
+				margin-top: var(--space-1);
+				color: var(--text-english);
+				font-size: var(--font-size-small);
+			}
+			.filter-zh {
+				font-size: 0.88rem;
+				font-weight: 600;
+				line-height: 1.2;
+			}
+			.filter-en {
+				margin-top: 0.12rem;
+				font-size: 0.6rem;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				color: var(--text-english);
+			}
+			.filter-empty {
+				display: none;
+				margin: 0 0 var(--space-8);
+				padding: 1.4rem 1rem;
+				border-radius: var(--radius-card);
+				background: var(--surface);
+				text-align: center;
+			}
+			.filter-empty.is-visible {
+				display: block;
+			}
+			.filter-empty-zh {
+				margin: 0;
+				color: var(--text-primary);
+			}
+			.filter-empty-en {
+				margin: 0.3rem 0 0;
+				font-size: 0.75rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--text-english);
+			}
+			.filter-summary {
+				margin: -0.75rem 0 1.25rem;
+				font-size: 0.82rem;
+				color: var(--text-secondary);
+			}
+			.post-grid {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: var(--space-5);
+				list-style: none;
 				margin: 0;
 				padding: 0;
 			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
+			.post-item {
+				min-width: 0;
 			}
 			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
+				.blog-heading h1 {
+					font-size: 1.4rem;
 				}
-				ul li {
-					width: 100%;
-					text-align: center;
+				.category-filter {
+					gap: var(--space-1);
 				}
-				ul li:first-child {
-					margin-bottom: 0;
+				.category-filter a {
+					min-width: 3.6rem;
+					padding: 0.32rem 0.55rem;
 				}
-				ul li:first-child .title {
-					font-size: 1.563em;
+				.filter-zh {
+					font-size: 0.8rem;
+				}
+				.post-grid {
+					grid-template-columns: minmax(0, 1fr);
+					gap: var(--space-4);
 				}
 			}
 		</style>
@@ -89,23 +176,135 @@ const posts = (await getCollection('blog')).sort(
 		<Header />
 		<main>
 			<section>
-				<ul>
+				<div class="blog-heading">
+					<h1>文章</h1>
+					<p class="blog-heading-en">BLOG</p>
+				</div>
+				<p class="blog-intro">记录生活、想法与正在探索的主题。</p>
+				<p class="blog-intro-en">Notes on life, ideas, and the things I'm exploring.</p>
+				<nav class="category-filter" aria-label="文章分类">
+					<a href="/blog/" data-category="all">
+						<span class="filter-zh">全部</span>
+						<span class="filter-en">ALL</span>
+					</a>
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
+						BLOG_CATEGORIES.map((category) => (
+							<a href={`/blog/?category=${category}`} data-category={category}>
+								<span class="filter-zh">{CATEGORY_ZH[category]}</span>
+								<span class="filter-en">{category}</span>
+							</a>
+						))
+					}
+				</nav>
+				<section class="blog-featured" aria-labelledby="featured-heading" data-featured>
+					<div class="section-heading">
+						<h2 id="featured-heading">本期精选</h2>
+						<p class="section-en">FEATURED STORIES</p>
+					</div>
+					{featuredPosts.length > 0 ? (
+						<ul class="post-grid">
+							{featuredPosts.map((post, index) => (
+								<li>
+									<PostCard post={post} variant={index} headingLevel="h2" />
+								</li>
+							))}
+						</ul>
+					) : (
+						<div class="featured-empty">
+							<p>精选文章稍后揭晓。</p>
+							<p>Featured stories are coming soon.</p>
+						</div>
+					)}
+				</section>
+				<p class="filter-summary" data-summary aria-live="polite" aria-atomic="true">
+					共 {posts.length} 篇文章
+				</p>
+				<div
+					class:list={['filter-empty', { 'is-visible': posts.length === 0 }]}
+					data-empty
+				>
+					<p class="filter-empty-zh" data-empty-zh>
+						{posts.length === 0
+							? '还没有正式发布的文章，新内容正在准备中。'
+							: '这个分类暂时没有文章，试试其他分类吧。'}
+					</p>
+					<p class="filter-empty-en" data-empty-en>
+						{posts.length === 0
+							? 'No published posts yet. New writing is on the way.'
+							: 'No matching posts yet. Try another category.'}
+					</p>
+				</div>
+				{posts.length > 0 && (
+				<ul class="post-grid">
+					{
+						posts.map((post, index) => (
+							<li class="post-item" data-category={post.data.category ?? ''}>
+								<PostCard post={post} variant={index} headingLevel="h2" />
 							</li>
 						))
 					}
 				</ul>
+				)}
 			</section>
 		</main>
 		<Footer />
+		<script>
+			const validCategories = new Set(['Life', 'Tech', 'Notes', 'Games']);
+
+			function selectedCategory() {
+				const value = new URLSearchParams(window.location.search).get('category');
+				if (value && validCategories.has(value)) return value;
+				return 'all';
+			}
+
+			function applyCategoryFilter() {
+				const selected = selectedCategory();
+				const featured = document.querySelector<HTMLElement>('[data-featured]');
+				const items = document.querySelectorAll<HTMLElement>('.post-item');
+				const empty = document.querySelector<HTMLElement>('[data-empty]');
+				const summary = document.querySelector<HTMLElement>('[data-summary]');
+				const emptyZh = document.querySelector<HTMLElement>('[data-empty-zh]');
+				const emptyEn = document.querySelector<HTMLElement>('[data-empty-en]');
+				let visibleCount = 0;
+
+				document.querySelectorAll<HTMLAnchorElement>('.category-filter a').forEach((link) => {
+					link.classList.toggle('is-active', link.dataset.category === selected);
+				});
+				if (featured) featured.hidden = selected !== 'all';
+
+				items.forEach((item) => {
+					const category = item.dataset.category ?? '';
+					const visible = selected === 'all' || category === selected;
+					item.hidden = !visible;
+					if (visible) visibleCount += 1;
+				});
+
+				const activeLink = document.querySelector<HTMLAnchorElement>(
+					`.category-filter a[data-category="${selected}"]`,
+				);
+				const activeLabel = activeLink?.querySelector('.filter-zh')?.textContent?.trim() ?? selected;
+				if (summary) {
+					summary.textContent = selected === 'all'
+						? `共 ${visibleCount} 篇文章`
+						: `${activeLabel} · 共 ${visibleCount} 篇文章`;
+				}
+				const noPublishedPosts = items.length === 0;
+				empty?.classList.toggle('is-visible', visibleCount === 0);
+				if (visibleCount === 0) {
+					if (emptyZh) {
+						emptyZh.textContent = noPublishedPosts
+							? '还没有正式发布的文章，新内容正在准备中。'
+							: '这个分类暂时没有文章，试试其他分类吧。';
+					}
+					if (emptyEn) {
+						emptyEn.textContent = noPublishedPosts
+							? 'No published posts yet. New writing is on the way.'
+							: 'No matching posts yet. Try another category.';
+					}
+				}
+			}
+
+			applyCategoryFilter();
+		</script>
 	</body>
 </html>

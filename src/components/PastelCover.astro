@@ -1,0 +1,85 @@
+---
+interface Props {
+	variant: number;
+}
+
+const { variant } = Astro.props;
+const kind = ((variant % 4) + 4) % 4;
+---
+
+<div class:list={['pastel-cover', `kind-${kind}`]} aria-hidden="true">
+	{
+		kind === 0 && (
+			<svg class="pastel-art" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+				<rect width="320" height="180" fill="var(--accent-soft)"></rect>
+				<circle cx="48" cy="36" r="10" fill="var(--surface)"></circle>
+				<circle cx="276" cy="44" r="8" fill="var(--warm-soft)"></circle>
+				<circle cx="160" cy="92" r="28" fill="var(--surface)"></circle>
+				<circle cx="138" cy="92" r="16" fill="var(--page-bg)"></circle>
+				<circle cx="182" cy="92" r="16" fill="var(--page-bg)"></circle>
+				<circle cx="160" cy="70" r="16" fill="var(--page-bg)"></circle>
+				<circle cx="160" cy="114" r="16" fill="var(--page-bg)"></circle>
+				<circle cx="160" cy="92" r="8" fill="var(--warm-soft)"></circle>
+			</svg>
+		)
+	}
+	{
+		kind === 1 && (
+			<svg class="pastel-art" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+				<rect width="320" height="180" fill="var(--warm-soft)"></rect>
+				<ellipse cx="160" cy="148" rx="58" ry="10" fill="var(--accent-soft)"></ellipse>
+				<ellipse cx="128" cy="78" rx="16" ry="22" fill="var(--surface)"></ellipse>
+				<ellipse cx="192" cy="78" rx="16" ry="22" fill="var(--surface)"></ellipse>
+				<ellipse cx="128" cy="80" rx="8" ry="12" fill="var(--accent-soft)"></ellipse>
+				<ellipse cx="192" cy="80" rx="8" ry="12" fill="var(--accent-soft)"></ellipse>
+				<circle cx="160" cy="102" r="34" fill="var(--surface)"></circle>
+				<circle cx="148" cy="100" r="4" fill="var(--text-primary)"></circle>
+				<circle cx="172" cy="100" r="4" fill="var(--text-primary)"></circle>
+				<path d="M160 108c3 4 8 4 10 0" stroke="var(--text-english)" stroke-width="2" stroke-linecap="round"></path>
+				<path d="M160 108c-3 4-8 4-10 0" stroke="var(--text-english)" stroke-width="2" stroke-linecap="round"></path>
+				<circle cx="138" cy="108" r="5" fill="var(--accent-soft)"></circle>
+				<circle cx="182" cy="108" r="5" fill="var(--accent-soft)"></circle>
+			</svg>
+		)
+	}
+	{
+		kind === 2 && (
+			<svg class="pastel-art" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+				<rect width="320" height="180" fill="var(--page-bg)"></rect>
+				<circle cx="52" cy="40" r="8" fill="var(--accent-soft)"></circle>
+				<circle cx="268" cy="52" r="12" fill="var(--warm-soft)"></circle>
+				<rect x="126" y="78" width="68" height="46" rx="14" fill="var(--surface)"></rect>
+				<rect x="134" y="86" width="52" height="30" rx="10" fill="var(--accent-soft)"></rect>
+				<path d="M194 92c18-2 28 10 18 22" stroke="var(--warm-soft)" stroke-width="6" stroke-linecap="round"></path>
+				<ellipse cx="160" cy="132" rx="42" ry="8" fill="var(--warm-soft)"></ellipse>
+			</svg>
+		)
+	}
+	{
+		kind === 3 && (
+			<svg class="pastel-art" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+				<rect width="320" height="180" fill="var(--surface)"></rect>
+				<circle cx="86" cy="58" r="14" fill="var(--accent-soft)"></circle>
+				<circle cx="246" cy="46" r="10" fill="var(--warm-soft)"></circle>
+				<ellipse cx="160" cy="108" rx="70" ry="28" fill="var(--page-bg)"></ellipse>
+				<ellipse cx="132" cy="104" rx="22" ry="16" fill="var(--warm-soft)"></ellipse>
+				<ellipse cx="176" cy="100" rx="28" ry="18" fill="var(--accent-soft)"></ellipse>
+				<ellipse cx="204" cy="112" rx="18" ry="12" fill="var(--warm-soft)"></ellipse>
+			</svg>
+		)
+	}
+</div>
+
+<style>
+	.pastel-cover,
+	.pastel-art {
+		display: block;
+		width: 100%;
+		height: 100%;
+		min-height: 100%;
+	}
+
+	.pastel-art {
+		object-fit: cover;
+	}
+</style>

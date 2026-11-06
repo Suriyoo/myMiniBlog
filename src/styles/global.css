@@ -5,20 +5,69 @@
  */
 
 :root {
-	--cream: #f8f3ec;
-	--sakura: #f5dce5;
-	--lilac: #e9e1f3;
-	--coffee: #62544f;
-	--muted: #a58c91;
-	--card: #fffdf9;
-	--accent: #c48b9f;
-	--accent-dark: #8f6574;
-	--black: 98, 84, 79;
-	--gray: 165, 140, 145;
-	--gray-light: 245, 220, 229;
-	--gray-dark: 98, 84, 79;
-	--gray-gradient: #f8f3ec, #fffdf9;
-	--box-shadow: 0 10px 28px rgba(98, 84, 79, 0.08);
+	--page-bg: #faf9f6;
+	--surface: #ffffff;
+	--text-primary: #393631;
+	--text-secondary: #756f68;
+	--text-english: #78656a;
+	--accent: #d9aeb9;
+	--accent-soft: #f2e8ea;
+	--divider: #eae5df;
+	--warm-soft: #f1ece7;
+	--accent-rgb: 217, 174, 185;
+	--shadow-rgb: 57, 54, 49;
+	--cream: var(--page-bg);
+	--sakura: var(--accent-soft);
+	--lilac: var(--warm-soft);
+	--coffee: var(--text-primary);
+	--muted: var(--text-secondary);
+	--card: var(--surface);
+	--accent-dark: #795b63;
+	--black: 57, 54, 49;
+	--gray: 117, 111, 104;
+	--gray-light: 234, 229, 223;
+	--gray-dark: 57, 54, 49;
+	--sage-soft: #e4ece4;
+	--apricot-soft: #f5e8dc;
+	--font-english: "Atkinson", "PingFang SC", sans-serif;
+	--font-body: "Atkinson", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+	--font-size-body: 18px;
+	--font-size-body-mobile: 17px;
+	--font-size-display: 2.15rem;
+	--font-size-page-title: 1.7rem;
+	--font-size-article-title: 2rem;
+	--font-size-article-title-mobile: 1.55rem;
+	--font-size-caption: 0.75rem;
+	--font-size-small: 0.875rem;
+	--font-size-card-title: 1.15rem;
+	--font-size-section: 21px;
+	--font-size-section-mobile: 19px;
+	--font-weight-medium: 500;
+	--font-weight-semibold: 600;
+	--line-height-body: 1.75;
+	--line-height-heading: 1.2;
+	--paragraph-space: 2em;
+	--content-width: 720px;
+	--site-width: 1080px;
+	--listing-width: 960px;
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-12: 3rem;
+	--radius-control: 10px;
+	--radius-card: 16px;
+	--radius-feature: 24px;
+	--radius-pill: 999px;
+	--transition-fast: 160ms ease;
+	--transition-standard: 220ms ease;
+	--gray-gradient: var(--page-bg), var(--surface);
+	--box-shadow: 0 10px 28px rgba(var(--shadow-rgb), 0.08);
+	--box-shadow-card: 0 8px 20px rgba(var(--shadow-rgb), 0.07);
+	--box-shadow-hover: 0 12px 24px rgba(var(--shadow-rgb), 0.1);
 }
 @font-face {
 	font-family: "Atkinson";
@@ -35,19 +84,19 @@
 	font-display: swap;
 }
 body {
-	font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Atkinson", sans-serif;
+	font-family: var(--font-body);
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background: var(--cream);
+	background: var(--page-bg);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: var(--coffee);
-	font-size: 18px;
-	line-height: 1.75;
+	color: var(--text-primary);
+	font-size: var(--font-size-body);
+	line-height: var(--line-height-body);
 }
 main {
-	width: 720px;
+	width: var(--content-width);
 	max-width: calc(100% - 2em);
 	margin: auto;
 	padding: 3em 1em;
@@ -59,8 +108,8 @@ h4,
 h5,
 h6 {
 	margin: 0 0 0.5rem 0;
-	color: var(--coffee);
-	line-height: 1.2;
+	color: var(--text-primary);
+	line-height: var(--line-height-heading);
 }
 h1 {
 	font-size: 3.052em;
@@ -85,13 +134,30 @@ a {
 	color: var(--accent-dark);
 }
 a:hover {
-	color: var(--accent);
+	color: var(--accent-dark);
 }
 p {
 	margin-bottom: 1em;
 }
 .prose p {
-	margin-bottom: 2em;
+	margin-bottom: var(--paragraph-space);
+}
+
+:where(
+	.translation,
+	.section-translation,
+	.title-en,
+	.description-en,
+	.nav-en,
+	.footer-tagline-en,
+	.blog-heading-en,
+	.filter-en,
+	.filter-empty-en,
+	.section-en,
+	.hero-en,
+	.hero-assist
+) {
+	font-family: var(--font-english);
 }
 textarea {
 	width: 100%;
@@ -106,33 +172,49 @@ table {
 img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 8px;
+	border-radius: var(--radius-control);
 }
 code {
 	padding: 2px 5px;
-	background-color: var(--sakura);
+	background-color: var(--accent-soft);
 	border-radius: 2px;
 }
 pre {
 	padding: 1.5em;
-	border-radius: 8px;
+	border-radius: var(--radius-control);
 }
 pre > code {
 	all: unset;
 }
 blockquote {
-	border-left: 4px solid var(--sakura);
+	border-left: 4px solid var(--accent);
 	padding: 0 0 0 20px;
 	margin: 0px;
 	font-size: 1.333em;
 }
 hr {
 	border: none;
-	border-top: 1px solid var(--sakura);
+	border-top: 1px solid var(--divider);
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent-dark);
+	outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		scroll-behavior: auto !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
 }
 @media (max-width: 720px) {
 	body {
-		font-size: 17px;
+		font-size: var(--font-size-body-mobile);
 	}
 	main {
 		padding: 1em;

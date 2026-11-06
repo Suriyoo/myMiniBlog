@@ -3,43 +3,59 @@ import HeaderLink from './HeaderLink.astro';
 import { SITE_TITLE } from '../consts';
 ---
 
+<span class="page-top-anchor" id="top" aria-hidden="true"></span>
 <header class="site-header">
 	<nav class="site-nav">
 		<a class="brand" href="/">{SITE_TITLE}</a>
 		<div class="nav-links">
-			<HeaderLink href="/">首页</HeaderLink>
-			<HeaderLink href="/blog">文章</HeaderLink>
-			<HeaderLink href="/about">关于我</HeaderLink>
+			<HeaderLink href="/" class="nav-item">
+				<span class="nav-zh">首页</span>
+				<span class="nav-en">HOME</span>
+			</HeaderLink>
+			<HeaderLink href="/blog" class="nav-item">
+				<span class="nav-zh">文章</span>
+				<span class="nav-en">BLOG</span>
+			</HeaderLink>
+			<HeaderLink href="/about" class="nav-item">
+				<span class="nav-zh">关于我</span>
+				<span class="nav-en">ABOUT</span>
+			</HeaderLink>
 		</div>
 	</nav>
 </header>
 <style>
+	.page-top-anchor {
+		display: block;
+		height: 0;
+		line-height: 0;
+	}
+
 	.site-header {
 		position: sticky;
 		top: 0;
 		z-index: 20;
 		margin: 0;
-		padding: 0.85rem 1.25rem;
-		background: rgba(255, 253, 249, 0.88);
+		padding: 0.85rem var(--space-5);
+		background: var(--surface);
 		backdrop-filter: blur(12px);
-		border-bottom: 1px solid rgba(245, 220, 229, 0.8);
+		border-bottom: 1px solid var(--divider);
 	}
 
 	.site-nav {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		width: 1080px;
+		width: var(--site-width);
 		max-width: calc(100% - 0.5rem);
 		margin: 0 auto;
-		gap: 1rem;
+		gap: var(--space-4);
 	}
 
 	.brand {
-		font-size: 1.15rem;
+		font-size: var(--font-size-card-title);
 		font-weight: 700;
 		letter-spacing: 0.02em;
-		color: var(--coffee);
+		color: var(--text-primary);
 		text-decoration: none;
 		white-space: nowrap;
 	}
@@ -51,41 +67,77 @@ import { SITE_TITLE } from '../consts';
 	.nav-links {
 		display: flex;
 		align-items: center;
-		gap: 0.25rem;
+		gap: var(--space-1);
 	}
 
-	.nav-links :global(a) {
-		padding: 0.35rem 0.7rem;
-		color: var(--coffee);
+	.nav-links :global(a.nav-item) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 0.4rem var(--space-3);
+		color: var(--text-primary);
 		border-bottom: none;
 		text-decoration: none;
-		font-size: 0.95rem;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
+		line-height: 1.15;
+		font-weight: 400;
+		transition: color var(--transition-fast), background-color var(--transition-fast);
 	}
 
-	.nav-links :global(a.active) {
-		background: var(--sakura);
-		font-weight: 700;
+	.nav-zh {
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--text-primary);
+	}
+
+	.nav-en {
+		margin-top: 0.14rem;
+		font-size: 0.62rem;
+		font-weight: 400;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--text-english);
+	}
+
+	.nav-links :global(a.nav-item.active) {
+		background: var(--accent-soft);
 		text-decoration: none;
 	}
 
-	.nav-links :global(a:hover) {
+	.nav-links :global(a.nav-item.active) .nav-zh {
+		font-weight: 700;
+	}
+
+	.nav-links :global(a.nav-item:hover) {
 		color: var(--accent-dark);
-		background: rgba(245, 220, 229, 0.55);
+		background: rgba(var(--accent-rgb), 0.18);
 	}
 
 	@media (max-width: 720px) {
 		.site-header {
-			padding: 0.7rem 0.9rem;
+			padding: 0.6rem 0.75rem;
 		}
 
 		.brand {
 			font-size: 1rem;
 		}
 
-		.nav-links :global(a) {
-			padding: 0.3rem 0.5rem;
-			font-size: 0.88rem;
+		.nav-links {
+			gap: 0.1rem;
+		}
+
+		.nav-links :global(a.nav-item) {
+			padding: 0.28rem 0.42rem;
+		}
+
+		.nav-zh {
+			font-size: 0.82rem;
+		}
+
+		.nav-en {
+			font-size: 0.54rem;
+			letter-spacing: 0.08em;
 		}
 	}
 </style>

@@ -1,0 +1,113 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CategoryTag from './CategoryTag.astro';
+import FormattedDate from './FormattedDate.astro';
+import PastelCover from './PastelCover.astro';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	variant?: number;
+	fallbackToPastel?: boolean;
+	headingLevel?: 'h2' | 'h3';
+}
+
+const { post, variant = 0, fallbackToPastel = false, headingLevel = 'h3' } = Astro.props;
+const heroImage = post.data.heroImage;
+const coverImage = heroImage && !(fallbackToPastel && heroImage.startsWith('/blog-placeholder-'))
+	? heroImage
+	: undefined;
+---
+
+<a class="post-card" href={`/blog/${post.id}/`}>
+	<div class="post-cover">
+		{coverImage ? (
+			<img src={coverImage} alt="" width="720" height="405" />
+		) : (
+			<PastelCover variant={variant} />
+		)}
+	</div>
+	<div class="post-body">
+		<CategoryTag category={post.data.category} />
+		{headingLevel === 'h2' ? (
+			<h2 class="post-title">{post.data.title}</h2>
+		) : (
+			<h3 class="post-title">{post.data.title}</h3>
+		)}
+		<p class="post-date">
+			<FormattedDate date={post.data.pubDate} />
+		</p>
+		<p class="post-description">{post.data.description}</p>
+	</div>
+</a>
+
+<style>
+	.post-card {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-width: 0;
+		overflow: hidden;
+		border-radius: var(--radius-card);
+		background: var(--surface);
+		box-shadow: var(--box-shadow-card);
+		color: var(--text-primary);
+		text-align: left;
+		text-decoration: none;
+		transition: transform var(--transition-standard), box-shadow var(--transition-standard);
+	}
+
+	.post-card:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--box-shadow-hover);
+		color: var(--text-primary);
+	}
+
+	.post-cover {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+		background: var(--accent-soft);
+	}
+
+	.post-cover img,
+	.post-cover :global(.pastel-cover) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 0;
+	}
+
+	.post-body {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-2);
+		padding: var(--space-5);
+		text-align: left;
+	}
+
+	.post-body :global(.category-tag) {
+		margin-bottom: 0;
+	}
+
+	.post-title {
+		margin: 0;
+		color: var(--text-primary);
+		font-size: var(--font-size-card-title);
+		line-height: 1.4;
+	}
+
+	.post-date {
+		margin: 0;
+		color: var(--text-secondary);
+		font-size: var(--font-size-caption);
+	}
+
+	.post-description {
+		margin: 0;
+		color: var(--text-primary);
+		font-size: var(--font-size-small);
+		line-height: 1.65;
+	}
+</style>

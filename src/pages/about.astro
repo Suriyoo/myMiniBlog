@@ -1,62 +1,414 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+import { profile } from '../data/profile';
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage="/blog-placeholder-about.jpg"
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`关于我 | ${SITE_TITLE}`} description="Mintsweet 的个人介绍与兴趣记录，部分资料待补充。" />
+	</head>
+	<body>
+		<Header />
+		<main class="about">
+			<header class="about-page-heading">
+				<p class="about-eyebrow">ABOUT / PERSONAL STORY</p>
+				<h1>关于我</h1>
+				<p>这里记录个人介绍、兴趣与近期关注。具体资料可在 profile 数据文件中补充。</p>
+			</header>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+			<section class="about-introduction" aria-labelledby="about-introduction-title">
+				<div class="about-introduction-copy">
+					<p class="about-label">INTRODUCTION</p>
+					<h2 id="about-introduction-title">{profile.displayName}</h2>
+					<p class="about-tagline">{profile.tagline}</p>
+					<p>{profile.introduction}</p>
+					<p class="about-english">{profile.introductionEn}</p>
+				</div>
+				<figure class="about-portrait">
+					{
+						profile.portrait.src ? (
+							<img src={profile.portrait.src} alt={profile.portrait.alt} />
+						) : (
+							<div class="portrait-placeholder" role="img" aria-label="个人照片待补充">
+								<span class="portrait-monogram">M</span>
+								<span class="portrait-placeholder-label">PORTRAIT / 待补充</span>
+							</div>
+						)
+					}
+					<figcaption>{profile.portrait.alt}</figcaption>
+				</figure>
+			</section>
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+			<section class="about-section" aria-labelledby="about-me-title">
+				<header class="about-section-heading">
+					<h2 id="about-me-title">关于我</h2>
+					<p>ABOUT ME</p>
+				</header>
+				<div class="about-section-body">
+					<p>个人经历和关注领域尚待补充。</p>
+					<ul class="interest-list">
+						{profile.interests.map((interest) => <li>{interest}</li>)}
+					</ul>
+				</div>
+			</section>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
+			<section class="about-section" aria-labelledby="journey-title">
+				<header class="about-section-heading">
+					<h2 id="journey-title">我的旅程</h2>
+					<p>MY JOURNEY</p>
+				</header>
+				<div class="about-section-body">
+					{
+						profile.journey.length > 0 ? (
+							<ol class="journey-list">
+								{profile.journey.map((entry) => (
+									<li>
+										<p class="journey-period">{entry.period}</p>
+										<h3>{entry.title}</h3>
+										<p>{entry.description}</p>
+									</li>
+								))}
+							</ol>
+						) : (
+							<p class="about-placeholder">个人经历时间线待填写。<span>Personal milestones can be added here.</span></p>
+						)
+					}
+				</div>
+			</section>
 
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+			<section class="about-section" aria-labelledby="things-title">
+				<header class="about-section-heading">
+					<h2 id="things-title">我喜欢的事物</h2>
+					<p>THINGS I LOVE</p>
+				</header>
+				<div class="things-list">
+					{profile.thingsILove.map((item) => (
+						<div class="thing-item">
+							<p>{item.category}<span>{item.english}</span></p>
+							<p>{item.value}</p>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section class="about-section" aria-labelledby="currently-title">
+				<header class="about-section-heading">
+					<h2 id="currently-title">最近在做</h2>
+					<p>CURRENTLY</p>
+				</header>
+				<div class="currently-list">
+					{profile.currently.map((item) => (
+						<div class="currently-item">
+							<p>{item.label}<span>{item.english}</span></p>
+							<p>{item.value}</p>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section class="about-section" aria-labelledby="contact-title">
+				<header class="about-section-heading">
+					<h2 id="contact-title">联系我</h2>
+					<p>GET IN TOUCH</p>
+				</header>
+				<div class="about-section-body contact-links">
+					{
+						profile.contact.email ? (
+							<a href={`mailto:${profile.contact.email}`}>{profile.contact.email}</a>
+						) : (
+						<p>邮箱待填写。</p>
+						)
+					}
+					{profile.contact.socialLinks.map((link) => (
+						<a href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
+					))}
+					{profile.contact.socialLinks.length === 0 && <p>公开社交链接待填写。</p>}
+				</div>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.about {
+		width: var(--site-width);
+		max-width: calc(100% - 2em);
+		padding-top: var(--space-12);
+		padding-bottom: var(--space-12);
+	}
+
+	.about-page-heading {
+		margin-bottom: var(--space-8);
+		padding-bottom: var(--space-6);
+		border-bottom: 1px solid var(--divider);
+	}
+
+	.about-eyebrow {
+		margin: 0 0 var(--space-1);
+		font-size: var(--font-size-caption);
+		letter-spacing: 0.16em;
+		color: var(--text-english);
+	}
+
+	.about-page-heading h1 {
+		margin: 0;
+		font-size: var(--font-size-article-title);
+	}
+
+	.about-page-heading > p:last-child {
+		max-width: 42rem;
+		margin: var(--space-3) 0 0;
+		color: var(--text-secondary);
+	}
+
+	.about-introduction {
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+		gap: var(--space-12);
+		align-items: center;
+		padding: 0 0 var(--space-12);
+		border-bottom: 1px solid var(--divider);
+	}
+
+	.about-introduction-copy h2 {
+		margin: 0;
+		font-size: var(--font-size-display);
+		font-weight: var(--font-weight-semibold);
+		line-height: 1.25;
+	}
+
+	.about-label {
+		margin: 0 0 var(--space-2);
+		color: var(--text-english);
+		font-size: var(--font-size-caption);
+		letter-spacing: 0.12em;
+	}
+
+	.about-tagline {
+		margin: var(--space-3) 0 var(--space-4);
+		color: var(--accent-dark);
+		font-size: 1.1rem;
+	}
+
+	.about-introduction-copy > p:not(.about-label) {
+		max-width: 38rem;
+		margin: 0 0 var(--space-2);
+		line-height: var(--line-height-body);
+	}
+
+	.about-introduction-copy .about-english {
+		color: var(--text-english);
+		font-size: var(--font-size-small);
+	}
+
+	.about-portrait {
+		margin: 0;
+	}
+
+	.portrait-placeholder,
+	.about-portrait img {
+		display: grid;
+		width: 100%;
+		aspect-ratio: 4 / 5;
+		place-items: center;
+		overflow: hidden;
+		border-radius: var(--radius-feature);
+		background: linear-gradient(145deg, var(--sage-soft), var(--apricot-soft));
+	}
+
+	.portrait-placeholder {
+		position: relative;
+		align-content: center;
+		gap: var(--space-2);
+		text-align: center;
+	}
+
+	.portrait-monogram {
+		color: rgba(var(--shadow-rgb), 0.2);
+		font-family: var(--font-english);
+		font-size: 8rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.portrait-placeholder-label {
+		color: var(--text-secondary);
+		font-size: var(--font-size-caption);
+		letter-spacing: 0.1em;
+	}
+
+	.about-portrait figcaption {
+		margin-top: var(--space-2);
+		color: var(--text-secondary);
+		font-size: var(--font-size-caption);
+	}
+
+	.about-section {
+		display: grid;
+		grid-template-columns: minmax(150px, 0.65fr) minmax(0, 1.35fr);
+		gap: var(--space-8);
+		padding: var(--space-6) 0;
+		border-top: 1px solid var(--divider);
+	}
+
+	.about-section-heading h2 {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin: 0;
+		font-size: var(--font-size-card-title);
+		font-weight: var(--font-weight-semibold);
+	}
+
+	.about-section-heading p {
+		margin: var(--space-1) 0 0;
+		color: var(--text-english);
+		font-size: var(--font-size-caption);
+		letter-spacing: 0.1em;
+	}
+
+	.about-section-body p {
+		margin: 0 0 var(--space-3);
+		color: var(--text-primary);
+	}
+
+	.about-placeholder span {
+		display: block;
+		margin-top: var(--space-1);
+		color: var(--text-english);
+		font-size: var(--font-size-small);
+	}
+
+	.interest-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		list-style: none;
+		margin: var(--space-4) 0 0;
+		padding: 0;
+	}
+
+	.interest-list li {
+		padding: var(--space-1) var(--space-3);
+		border: 1px solid var(--divider);
+		border-radius: var(--radius-pill);
+		background: var(--surface);
+		color: var(--text-secondary);
+		font-size: var(--font-size-small);
+	}
+
+	.journey-list {
+		margin: 0;
+		padding-left: var(--space-5);
+	}
+
+	.journey-list li {
+		padding: 0 0 var(--space-5) var(--space-2);
+		border-left: 1px solid var(--accent);
+	}
+
+	.journey-list h3 {
+		margin: 0 0 var(--space-1);
+		font-size: var(--font-size-card-title);
+	}
+
+	.journey-period {
+		color: var(--text-english) !important;
+		font-size: var(--font-size-caption);
+	}
+
+	.things-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: var(--space-6);
+	}
+
+	.thing-item,
+	.currently-item {
+		padding: var(--space-3) 0;
+		border-bottom: 1px solid var(--divider);
+	}
+
+	.thing-item p:first-child,
+	.currently-item p:first-child {
+		margin: 0 0 var(--space-1);
+		font-weight: var(--font-weight-semibold);
+	}
+
+	.thing-item p:first-child span,
+	.currently-item p:first-child span {
+		margin-left: var(--space-2);
+		color: var(--text-english);
+		font-size: var(--font-size-caption);
+		font-weight: 400;
+	}
+
+	.thing-item p:last-child,
+	.currently-item p:last-child {
+		margin: 0;
+		color: var(--text-secondary);
+	}
+
+	.currently-list {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--space-5);
+	}
+
+	.contact-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3) var(--space-5);
+	}
+
+	.contact-links p {
+		width: 100%;
+		margin: 0;
+		color: var(--text-secondary);
+	}
+
+	@media (max-width: 720px) {
+		.about {
+			padding-top: var(--space-8);
+		}
+
+		.about-introduction {
+			grid-template-columns: 1fr;
+			gap: var(--space-6);
+			padding-bottom: var(--space-8);
+		}
+
+		.about-introduction-copy h2 {
+			font-size: var(--font-size-page-title);
+		}
+
+		.portrait-placeholder,
+		.about-portrait img {
+			aspect-ratio: 16 / 9;
+		}
+
+		.portrait-monogram {
+			font-size: 6rem;
+		}
+
+		.about-section {
+			grid-template-columns: 1fr;
+			gap: var(--space-4);
+		}
+
+		.things-list {
+			grid-template-columns: 1fr;
+		}
+
+		.currently-list {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
+	}
+</style>
