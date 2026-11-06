@@ -194,31 +194,75 @@ const {
 				color: var(--text-english);
 				font-size: var(--font-size-caption);
 			}
-			.toc-sidebar ol,
-			.toc-mobile ol {
-				list-style: none;
+			:global(.toc-sidebar ol),
+			:global(.toc-mobile ol) {
+				list-style: none !important;
+				list-style-type: none !important;
 				margin: 0;
 				padding: 0;
 			}
-			.toc-sidebar li + li,
-			.toc-mobile li + li {
-				margin-top: var(--space-2);
+
+			:global(.toc-sidebar li),
+			:global(.toc-mobile li) {
+				display: flex;
+				align-items: baseline;
+				gap: 0.65rem;
+				list-style: none !important;
+				margin: 0;
+				padding: 0;
 			}
-			.toc-sidebar a,
-			.toc-mobile a {
-				display: block;
+
+			:global(.toc-sidebar li::marker),
+			:global(.toc-mobile li::marker) {
+				content: "";
+			}
+
+			:global(.toc-sidebar li + li),
+			:global(.toc-mobile li + li) {
+				margin-top: 0.8rem;
+			}
+
+			:global(.toc-number) {
+				flex: 0 0 1.55rem;
 				color: var(--text-secondary);
-				font-size: var(--font-size-caption);
-				line-height: 1.5;
-				text-decoration: none;
+				font-size: 0.82rem;
+				font-variant-numeric: tabular-nums;
 			}
-			.toc-sidebar a:hover,
-			.toc-mobile a:hover {
+
+			:global(.toc-sidebar a),
+			:global(.toc-mobile a) {
+				display: block;
+				flex: 1;
+				min-width: 0;
+				color: var(--text-secondary);
+				font-size: 0.88rem;
+				line-height: 1.6;
+				text-decoration: none !important;
+				border-bottom: 0 !important;
+				box-shadow: none !important;
+				transition: color 160ms ease;
+			}
+
+			:global(.toc-sidebar a:hover),
+			:global(.toc-mobile a:hover) {
 				color: var(--accent-dark);
 			}
-			.toc-sidebar .toc-h3 a,
-			.toc-mobile .toc-h3 a {
-				padding-left: var(--space-3);
+
+			:global(.toc-sidebar .toc-h3),
+			:global(.toc-mobile .toc-h3) {
+				padding-left: 0.45rem;
+			}
+
+			:global(.toc-sidebar .toc-h3 a),
+			:global(.toc-mobile .toc-h3 a) {
+				font-size: 0.82rem;
+			}
+			:global(.toc-sidebar li.active .toc-number),
+			:global(.toc-sidebar li.active a),
+			:global(.toc-mobile li.active .toc-number),
+			:global(.toc-mobile li.active a) {
+				color: var(--accent-dark);
+				font-weight: var(--font-weight-semibold);
 			}
 			.toc-mobile {
 				display: none;
@@ -407,6 +451,7 @@ const {
 								</section>
 							)}
 						</div>
+					</div>
 					<aside class="toc-sidebar" aria-label="文章目录">
 						<p class="toc-title">目录</p>
 						<p class="toc-title-en">ON THIS PAGE</p>
@@ -433,17 +478,50 @@ const {
 
 				tocContainers.forEach((container) => {
 					const list = document.createElement('ol');
-					headings.forEach((heading) => {
+
+					headings.forEach((heading, index) => {
 						const item = document.createElement('li');
 						item.className = `toc-${heading.tagName.toLowerCase()}`;
+
+						const number = document.createElement('span');
+						number.className = 'toc-number';
+						number.textContent = String(index + 1).padStart(2, '0');
+
 						const link = document.createElement('a');
 						link.href = `#${heading.id}`;
 						link.textContent = heading.textContent?.trim() ?? '';
-						item.append(link);
+
+						item.append(number, link);
 						list.append(item);
 					});
+
 					container.replaceChildren(list);
 				});
+
+				// 等两个目录都生成后，再获取链接
+				const tocLinks = document.querySelectorAll<HTMLAnchorElement>(
+					'[data-toc] li a'
+				);
+
+				const headingObserver = new IntersectionObserver(
+					(entries) => {
+						entries.forEach((entry) => {
+							if (!entry.isIntersecting) return;
+
+							const activeId = (entry.target as HTMLElement).id;
+
+							tocLinks.forEach((link) => {
+								const isActive = link.getAttribute('href') === `#${activeId}`;
+								link.closest('li')?.classList.toggle('active', isActive);
+							});
+						});
+					},
+					{
+						rootMargin: '-15% 0px -75% 0px',
+					}
+				);
+
+				headings.forEach((heading) => headingObserver.observe(heading));
 			}
 
 			const mobileToc = document.querySelector<HTMLDetailsElement>('.toc-mobile');
