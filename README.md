@@ -1,5 +1,5 @@
 # myMiniBlog
-用于过域名审核
+Astro 5 + TypeScript + Cloudflare Workers
 
 ## 博客写作
 
