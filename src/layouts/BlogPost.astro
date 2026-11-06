@@ -177,48 +177,79 @@ const {
 				align-self: start;
 				max-height: calc(100vh - 7rem);
 				overflow-y: auto;
-				padding: var(--space-2) 0 var(--space-4) var(--space-4);
-				border-left: 1px solid var(--divider);
-			}
-			.toc-title,
-			.toc-title-en {
-				margin: 0;
+				box-sizing: border-box;
+				padding: 1.5rem;
+				background: var(--surface);
+				border: 1px solid var(--divider);
+				border-radius: 0 0 18px 18px;
 			}
 			.toc-title {
+				margin: 0 0 1.25rem;
+				padding-bottom: 1rem;
+				border-bottom: 1px solid var(--divider);
 				color: var(--text-primary);
 				font-size: var(--font-size-small);
 				font-weight: var(--font-weight-semibold);
+				letter-spacing: 0.04em;
 			}
 			.toc-title-en {
-				margin: var(--space-1) 0 var(--space-3);
-				color: var(--text-english);
-				font-size: var(--font-size-caption);
+				display: none;
 			}
-			.toc-sidebar ol,
-			.toc-mobile ol {
+			:global(.toc-sidebar ol),
+			:global(.toc-mobile ol) {
 				list-style: none;
 				margin: 0;
 				padding: 0;
 			}
-			.toc-sidebar li + li,
-			.toc-mobile li + li {
-				margin-top: var(--space-2);
+			:global(.toc-sidebar li),
+			:global(.toc-mobile li) {
+				display: flex;
+				align-items: baseline;
+				gap: 0.85rem;
+				margin: 0;
 			}
-			.toc-sidebar a,
-			.toc-mobile a {
-				display: block;
+			:global(.toc-sidebar li + li),
+			:global(.toc-mobile li + li) {
+				margin-top: 1rem;
+			}
+			:global(.toc-number) {
+				flex: 0 0 1.5rem;
 				color: var(--text-secondary);
-				font-size: var(--font-size-caption);
-				line-height: 1.5;
-				text-decoration: none;
+				font-size: 0.9rem;
+				font-variant-numeric: tabular-nums;
 			}
-			.toc-sidebar a:hover,
-			.toc-mobile a:hover {
+			:global(.toc-sidebar a),
+			:global(.toc-mobile a) {
+				display: block;
+				flex: 1;
+				color: var(--text-secondary);
+				font-size: 0.95rem;
+				line-height: 1.65;
+				text-decoration: none;
+				transition: color 160ms ease;
+			}
+			:global(.toc-sidebar a:hover),
+			:global(.toc-mobile a:hover) {
 				color: var(--accent-dark);
 			}
-			.toc-sidebar .toc-h3 a,
-			.toc-mobile .toc-h3 a {
-				padding-left: var(--space-3);
+			:global(.toc-sidebar li.active .toc-number),
+			:global(.toc-sidebar li.active a),
+			:global(.toc-mobile li.active .toc-number),
+			:global(.toc-mobile li.active a) {
+				color: var(--accent-dark);
+				font-weight: var(--font-weight-semibold);
+			}
+			:global(.toc-sidebar .toc-h3),
+			:global(.toc-mobile .toc-h3) {
+				padding-left: 0.5rem;
+			}
+			:global(.toc-sidebar .toc-h3 .toc-number),
+			:global(.toc-mobile .toc-h3 .toc-number) {
+				font-size: 0.8rem;
+			}
+			:global(.toc-sidebar .toc-h3 a),
+			:global(.toc-mobile .toc-h3 a) {
+				font-size: 0.875rem;
 			}
 			.toc-mobile {
 				display: none;
@@ -407,9 +438,9 @@ const {
 								</section>
 							)}
 						</div>
+					</div>
 					<aside class="toc-sidebar" aria-label="文章目录">
-						<p class="toc-title">目录</p>
-						<p class="toc-title-en">ON THIS PAGE</p>
+						<p class="toc-title">ON THIS PAGE</p>
 						<nav data-toc="desktop" aria-label="文章目录"></nav>
 					</aside>
 				</div>
@@ -433,17 +464,41 @@ const {
 
 				tocContainers.forEach((container) => {
 					const list = document.createElement('ol');
-					headings.forEach((heading) => {
+					headings.forEach((heading, index) => {
 						const item = document.createElement('li');
 						item.className = `toc-${heading.tagName.toLowerCase()}`;
+
+						const number = document.createElement('span');
+						number.className = 'toc-number';
+						number.textContent = String(index + 1).padStart(2, '0');
+
 						const link = document.createElement('a');
 						link.href = `#${heading.id}`;
 						link.textContent = heading.textContent?.trim() ?? '';
-						item.append(link);
+
+						item.append(number, link);
 						list.append(item);
 					});
 					container.replaceChildren(list);
 				});
+
+				const tocLinks = document.querySelectorAll<HTMLAnchorElement>('[data-toc] li a');
+				const headingObserver = new IntersectionObserver(
+					(entries) => {
+						entries.forEach((entry) => {
+							if (!entry.isIntersecting) return;
+							const activeId = (entry.target as HTMLElement).id;
+							tocLinks.forEach((link) => {
+								const item = link.closest('li');
+								const isActive = link.getAttribute('href') === `#${activeId}`;
+								item?.classList.toggle('active', isActive);
+							});
+						});
+					},
+					{ rootMargin: '-15% 0px -75% 0px' },
+				);
+
+				headings.forEach((heading) => headingObserver.observe(heading));
 			}
 
 			const mobileToc = document.querySelector<HTMLDetailsElement>('.toc-mobile');
