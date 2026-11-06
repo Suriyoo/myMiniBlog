@@ -177,33 +177,34 @@ const {
 				align-self: start;
 				max-height: calc(100vh - 7rem);
 				overflow-y: auto;
-				padding: var(--space-2) 0 var(--space-4) var(--space-4);
-				border-left: 1px solid var(--divider);
-			}
-			.toc-title,
-			.toc-title-en {
-				margin: 0;
+				box-sizing: border-box;
+				padding: 1.5rem;
+				background: var(--surface);
+				border: 1px solid var(--divider);
+				border-radius: 0 0 18px 18px;
 			}
 			.toc-title {
+				margin: 0 0 1.25rem;
+				padding-bottom: 1rem;
+				border-bottom: 1px solid var(--divider);
 				color: var(--text-primary);
 				font-size: var(--font-size-small);
 				font-weight: var(--font-weight-semibold);
+				letter-spacing: 0.04em;
 			}
 			.toc-title-en {
-				margin: var(--space-1) 0 var(--space-3);
-				color: var(--text-english);
-				font-size: var(--font-size-caption);
+				display: none;
 			}
-			:global(.toc-sidebar ol),
-			:global(.toc-mobile ol) {
+			:global(aside.toc-sidebar nav[data-toc="desktop"] ol),
+			:global(details.toc-mobile nav[data-toc="mobile"] ol) {
 				list-style: none !important;
 				list-style-type: none !important;
 				margin: 0;
 				padding: 0;
+				counter-reset: none;
 			}
-
-			:global(.toc-sidebar li),
-			:global(.toc-mobile li) {
+			:global(aside.toc-sidebar nav[data-toc="desktop"] li),
+			:global(details.toc-mobile nav[data-toc="mobile"] li) {
 				display: flex;
 				align-items: baseline;
 				gap: 0.65rem;
@@ -211,26 +212,24 @@ const {
 				margin: 0;
 				padding: 0;
 			}
-
-			:global(.toc-sidebar li::marker),
-			:global(.toc-mobile li::marker) {
-				content: "";
+			:global(aside.toc-sidebar nav[data-toc="desktop"] li::marker),
+			:global(details.toc-mobile nav[data-toc="mobile"] li::marker) {
+				content: "" !important;
 			}
-
-			:global(.toc-sidebar li + li),
-			:global(.toc-mobile li + li) {
+			:global(aside.toc-sidebar nav[data-toc="desktop"] li + li),
+			:global(details.toc-mobile nav[data-toc="mobile"] li + li) {
 				margin-top: 0.8rem;
 			}
-
-			:global(.toc-number) {
+			:global(aside.toc-sidebar .toc-number),
+			:global(details.toc-mobile .toc-number) {
 				flex: 0 0 1.55rem;
 				color: var(--text-secondary);
 				font-size: 0.82rem;
+				line-height: 1.5;
 				font-variant-numeric: tabular-nums;
 			}
-
-			:global(.toc-sidebar a),
-			:global(.toc-mobile a) {
+			:global(aside.toc-sidebar nav[data-toc="desktop"] a),
+			:global(details.toc-mobile nav[data-toc="mobile"] a) {
 				display: block;
 				flex: 1;
 				min-width: 0;
@@ -242,27 +241,28 @@ const {
 				box-shadow: none !important;
 				transition: color 160ms ease;
 			}
-
-			:global(.toc-sidebar a:hover),
-			:global(.toc-mobile a:hover) {
+			:global(aside.toc-sidebar nav[data-toc="desktop"] a:hover),
+			:global(details.toc-mobile nav[data-toc="mobile"] a:hover) {
 				color: var(--accent-dark);
 			}
-
-			:global(.toc-sidebar .toc-h3),
-			:global(.toc-mobile .toc-h3) {
-				padding-left: 0.45rem;
-			}
-
-			:global(.toc-sidebar .toc-h3 a),
-			:global(.toc-mobile .toc-h3 a) {
-				font-size: 0.82rem;
-			}
-			:global(.toc-sidebar li.active .toc-number),
-			:global(.toc-sidebar li.active a),
-			:global(.toc-mobile li.active .toc-number),
-			:global(.toc-mobile li.active a) {
+			:global(aside.toc-sidebar li.active .toc-number),
+			:global(aside.toc-sidebar li.active a),
+			:global(details.toc-mobile li.active .toc-number),
+			:global(details.toc-mobile li.active a) {
 				color: var(--accent-dark);
 				font-weight: var(--font-weight-semibold);
+			}
+			:global(aside.toc-sidebar .toc-h3),
+			:global(details.toc-mobile .toc-h3) {
+				padding-left: 0.45rem;
+			}
+			:global(aside.toc-sidebar .toc-h3 .toc-number),
+			:global(details.toc-mobile .toc-h3 .toc-number) {
+				font-size: 0.76rem;
+			}
+			:global(aside.toc-sidebar .toc-h3 a),
+			:global(details.toc-mobile .toc-h3 a) {
+				font-size: 0.82rem;
 			}
 			.toc-mobile {
 				display: none;
@@ -453,8 +453,7 @@ const {
 						</div>
 					</div>
 					<aside class="toc-sidebar" aria-label="文章目录">
-						<p class="toc-title">目录</p>
-						<p class="toc-title-en">ON THIS PAGE</p>
+						<p class="toc-title">ON THIS PAGE</p>
 						<nav data-toc="desktop" aria-label="文章目录"></nav>
 					</aside>
 				</div>
@@ -478,7 +477,6 @@ const {
 
 				tocContainers.forEach((container) => {
 					const list = document.createElement('ol');
-
 					headings.forEach((heading, index) => {
 						const item = document.createElement('li');
 						item.className = `toc-${heading.tagName.toLowerCase()}`;
@@ -494,31 +492,23 @@ const {
 						item.append(number, link);
 						list.append(item);
 					});
-
 					container.replaceChildren(list);
 				});
 
-				// 等两个目录都生成后，再获取链接
-				const tocLinks = document.querySelectorAll<HTMLAnchorElement>(
-					'[data-toc] li a'
-				);
-
+				const tocLinks = document.querySelectorAll<HTMLAnchorElement>('[data-toc] li a');
 				const headingObserver = new IntersectionObserver(
 					(entries) => {
 						entries.forEach((entry) => {
 							if (!entry.isIntersecting) return;
-
 							const activeId = (entry.target as HTMLElement).id;
-
 							tocLinks.forEach((link) => {
+								const item = link.closest('li');
 								const isActive = link.getAttribute('href') === `#${activeId}`;
-								link.closest('li')?.classList.toggle('active', isActive);
+								item?.classList.toggle('active', isActive);
 							});
 						});
 					},
-					{
-						rootMargin: '-15% 0px -75% 0px',
-					}
+					{ rootMargin: '-15% 0px -75% 0px' },
 				);
 
 				headings.forEach((heading) => headingObserver.observe(heading));
